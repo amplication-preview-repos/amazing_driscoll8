@@ -1,0 +1,60 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Strategy {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  name        String?
+  description String?
+}
+
+model Stock {
+  id                String            @id @default(cuid())
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  symbolField       String?
+  name              String?
+  price             Float?
+  marketCap         Float?
+  followedCompanies FollowedCompany[]
+  newsItems         News[]
+  portfolios        Portfolio[]
+}
+
+model Portfolio {
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  userId        Int?
+  shares        Int?
+  purchasePrice Float?
+  stock         Stock?   @relation(fields: [stockId], references: [id])
+  stockId       String?
+}
+
+model FollowedCompany {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    Int?
+  stock     Stock?   @relation(fields: [stockId], references: [id])
+  stockId   String?
+}
+
+model News {
+  id          String    @id @default(cuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  title       String?
+  content     String?
+  publishedAt DateTime?
+  stock       Stock?    @relation(fields: [stockId], references: [id])
+  stockId     String?
+}
